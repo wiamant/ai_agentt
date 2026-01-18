@@ -1,0 +1,42 @@
+[
+  {
+    "question": "Comment recharger mon compte",
+    "reponse": "Vous pouvez recharger votre compte en achetant une carte de recharge dans un point de vente, via l'application mobile inwi money, ou en demandant au chatbot de faire une recharge en précisant le montant."
+  },
+  {
+    "question": "Comment consulter mon solde",
+    "reponse": "Pour consulter votre solde, tapez *100# ou demandez simplement 'Quel est mon solde ?' dans ce chat."
+  },
+  {
+    "question": "Pass internet disponibles",
+    "reponse": "Nous proposons plusieurs pass internet : Pass 1 Go (10 DH/7j), Pass 5 Go (30 DH/30j), Pass 10 Go (50 DH/30j), Pass 20 Go (90 DH/30j), Pass Illimité (150 DH/30j)."
+  },
+  {
+    "question": "Comment activer un pass internet",
+    "reponse": "Pour activer un pass internet, demandez 'Je veux un pass internet' et choisissez l'offre qui vous convient. Le montant sera déduit automatiquement de votre solde."
+  },
+  {
+    "question": "Que faire en cas de vol de téléphone",
+    "reponse": "En cas de vol, vous pouvez suspendre immédiatement votre ligne en disant 'Suspendre ma ligne'. Cela empêchera toute utilisation frauduleuse. Pensez aussi à porter plainte."
+  },
+  {
+    "question": "Comment annuler une offre",
+    "reponse": "Pour annuler une offre active, demandez 'Annuler mon offre' et sélectionnez l'offre que vous souhaitez désactiver."
+  },
+  {
+    "question": "Horaires service client",
+    "reponse": "Notre service client est disponible 24h/24 et 7j/7. Vous pouvez nous contacter au 121 depuis votre mobile inwi, ou utiliser ce chatbot à tout moment."
+  },
+  {
+    "question": "Transférer du crédit",
+    "reponse": "Pour transférer du crédit à un autre numéro inwi, composez *116*montant*numéro# (exemple: *116*10*0612345678#)."
+  },
+  {
+    "question": "Vérifier consommation internet",
+    "reponse": "Pour vérifier votre consommation internet, tapez *222# ou demandez votre solde dans ce chat, il affichera votre data restant."
+  },
+  {
+    "question": "Changer de formule",
+    "reponse": "Pour changer de formule ou passer en forfait, contactez le 121 ou rendez-vous dans une agence inwi avec votre pièce d'identité."
+  }
+]

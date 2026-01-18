@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Service Client - inwi</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div id="auth-page" class="page active">
+        <div class="auth-container">
+            <h1>🤖 AI Service Client inwi</h1>
+            <p>Connectez-vous avec votre numéro</p>
+            <input type="tel" id="phone-input" placeholder="0612345678" maxlength="10">
+            <button onclick="login()">Se connecter</button>
+            <div class="info-box">
+                <p><strong>Comptes de test :</strong></p>
+                <p>📞 0612345678 (Ahmed)</p>
+                <p>📞 0698765432 (Fatima)</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat-page" class="page">
+        <div class="chat-container">
+            <div class="chat-header">
+                <div>
+                    <h2>🤖 AI Agent Service Client</h2>
+                    <p id="user-info"></p>
+                </div>
+                <button onclick="logout()">Déconnexion</button>
+            </div>
+            
+            <div id="messages" class="messages"></div>
+            
+            <div class="input-container">
+                <input type="text" id="message-input" placeholder="Tapez votre message..." onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Envoyer</button>
+            </div>
+            
+            <div class="quick-actions">
+                <button onclick="quickMessage('Quel est mon solde ?')">💰 Solde</button>
+                <button onclick="quickMessage('Recharge 50 DH')">💳 Recharge</button>
+                <button onclick="quickMessage('Active pass 10 Go')">🌐 Internet</button>
+                <button onclick="quickMessage('Comment recharger ?')">❓ Aide</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        async function login() {
+            const phone = document.getElementById('phone-input').value;
+            if (!phone) return alert('Entrez un numéro de téléphone');
+
+            const response = await fetch('/api/auth', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({msisdn: phone})
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                currentUser = data.client;
+                document.getElementById('auth-page').classList.remove('active');
+                document.getElementById('chat-page').classList.add('active');
+                document.getElementById('user-info').textContent = `${data.client.nom} - ${data.client.msisdn}`;
+                addMessage('bot', `Bienvenue ${data.client.nom} ! Comment puis-je vous aider ?`);
+            } else {
+                alert('Numéro non trouvé. Utilisez : 0612345678 ou 0698765432');
+            }
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const message = input.value.trim();
+            if (!message) return;
+
+            addMessage('user', message);
+            input.value = '';
+
+            const response = await fetch('/api/chat', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({message})
+            });
+
+            const data = await response.json();
+            
+            if (data.message) {
+                addMessage('bot', data.message);
+            }
+
+            // Gérer les actions spéciales
+            if (data.action === 'show_bundles' && data.data.offres) {
+                showBundles(data.data.offres);
+            } else if (data.action === 'show_active_bundles' && data.data.offres_actives) {
+                showActiveBundles(data.data.offres_actives);
+            }
+        }
+
+        function addMessage(sender, text) {
+            const messagesDiv = document.getElementById('messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.innerHTML = `
+                <div class="message-content">
+                    <strong>${sender === 'user' ? 'Vous' : 'AI Agent'}</strong>
+                    <p>${text.replace(/\n/g, '<br>')}</p>
+                </div>
+            `;
+            messagesDiv.appendChild(messageDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showBundles(offres) {
+            const messagesDiv = document.getElementById('messages');
+            const bundlesDiv = document.createElement('div');
+            bundlesDiv.className = 'bundles-container';
+            
+            offres.forEach(offre => {
+                const btn = document.createElement('button');
+                btn.className = 'bundle-btn';
+                btn.innerHTML = `
+                    <strong>${offre.nom}</strong>
+                    <span>${offre.data_go} Go - ${offre.prix} DH</span>
+                `;
+                btn.onclick = () => activateBundle(offre.id, offre.nom);
+                bundlesDiv.appendChild(btn);
+            });
+            
+            messagesDiv.appendChild(bundlesDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        function showActiveBundles(offres) {
+            if (offres.length === 0) {
+                addMessage('bot', 'Vous n\'avez aucune offre active.');
+                return;
+            }
+            
+            const messagesDiv = document.getElementById('messages');
+            const bundlesDiv = document.createElement('div');
+            bundlesDiv.className = 'bundles-container';
+            
+            offres.forEach(offre => {
+                const btn = document.createElement('button');
+                btn.className = 'bundle-btn cancel';
+                btn.innerHTML = `
+                    <strong>${offre.nom}</strong>
+                    <span>Expire le ${offre.expiration}</span>
+                `;
+                btn.onclick = () => cancelBundle(offre.id, offre.nom);
+                bundlesDiv.appendChild(btn);
+            });
+            
+            messagesDiv.appendChild(bundlesDiv);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+
+        async function activateBundle(bundleId, bundleName) {
+            const response = await fetch('/api/action/activate-bundle', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({bundle_id: bundleId})
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                addMessage('bot', `✅ ${data.offre} activé jusqu'au ${data.expiration}. Nouveau solde : ${data.nouveau_solde.toFixed(2)} DH`);
+            } else {
+                addMessage('bot', `❌ ${data.error}`);
+            }
+        }
+
+        async function cancelBundle(bundleId, bundleName) {
+            if (!confirm(`Voulez-vous vraiment annuler ${bundleName} ?`)) return;
+
+            const response = await fetch('/api/action/cancel-bundle', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({bundle_id: bundleId})
+            });
+
+            const data = await response.json();
+            
+            if (data.success) {
+                addMessage('bot', `✅ ${data.offre_annulee} a été annulée.`);
+            } else {
+                addMessage('bot', `❌ ${data.error}`);
+            }
+        }
+
+        function quickMessage(msg) {
+            document.getElementById('message-input').value = msg;
+            sendMessage();
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        async function logout() {
+            await fetch('/api/logout', {method: 'POST'});
+            location.reload();
+        }
+    </script>
+</body>
+</html>
