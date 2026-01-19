@@ -9,14 +9,14 @@
 <body>
     <div id="auth-page" class="page active">
         <div class="auth-container">
-            <h1>🤖 AI Service Client inwi</h1>
+            <h1> AI Service Client inwi</h1>
             <p>Connectez-vous avec votre numéro</p>
             <input type="tel" id="phone-input" placeholder="0612345678" maxlength="10">
             <button onclick="login()">Se connecter</button>
             <div class="info-box">
                 <p><strong>Comptes de test :</strong></p>
-                <p>📞 0612345678 (Ahmed)</p>
-                <p>📞 0698765432 (Fatima)</p>
+                <p> 0612345678 (Ahmed)</p>
+                <p> 0698765432 (Fatima)</p>
             </div>
         </div>
     </div>
@@ -39,10 +39,10 @@
             </div>
             
             <div class="quick-actions">
-                <button onclick="quickMessage('Quel est mon solde ?')">💰 Solde</button>
-                <button onclick="quickMessage('Recharge 50 DH')">💳 Recharge</button>
-                <button onclick="quickMessage('Active pass 10 Go')">🌐 Internet</button>
-                <button onclick="quickMessage('Comment recharger ?')">❓ Aide</button>
+                <button onclick="quickMessage('Quel est mon solde ?')"> Solde</button>
+                <button onclick="quickMessage('Recharge 50 DH')"> Recharge</button>
+                <button onclick="quickMessage('Active pass 10 Go')"> Internet</button>
+                <button onclick="quickMessage('Comment recharger ?')"> Aide</button>
             </div>
         </div>
     </div>
@@ -170,9 +170,9 @@
             const data = await response.json();
             
             if (data.success) {
-                addMessage('bot', `✅ ${data.offre} activé jusqu'au ${data.expiration}. Nouveau solde : ${data.nouveau_solde.toFixed(2)} DH`);
+                addMessage('bot', ` ${data.offre} activé jusqu'au ${data.expiration}. Nouveau solde : ${data.nouveau_solde.toFixed(2)} DH`);
             } else {
-                addMessage('bot', `❌ ${data.error}`);
+                addMessage('bot', ` ${data.error}`);
             }
         }
 
@@ -188,9 +188,9 @@
             const data = await response.json();
             
             if (data.success) {
-                addMessage('bot', `✅ ${data.offre_annulee} a été annulée.`);
+                addMessage('bot', ` ${data.offre_annulee} a été annulée.`);
             } else {
-                addMessage('bot', `❌ ${data.error}`);
+                addMessage('bot', ` ${data.error}`);
             }
         }
 
