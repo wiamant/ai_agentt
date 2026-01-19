@@ -5,13 +5,13 @@ from llm import LocalLLM
 
 class AIAgent:
     def __init__(self, db=None, telecom=None):
-        print("🔄 Chargement des modèles...")
+        print(" Chargement des modèles...")
         self.model = SentenceTransformer('paraphrase-multilingual-MiniLM-L12-v2')
         self.llm = LocalLLM()
         self.db = db  # NOUVEAU : accès à la base de données
         self.telecom = telecom  # NOUVEAU : accès aux fonctions télécom
         self.load_knowledge_base()
-        print("✅ Agent AI prêt")
+        print(" Agent AI prêt")
 
     def load_knowledge_base(self):
         with open('knowledge_base.json', encoding='utf-8') as f:
@@ -46,16 +46,11 @@ class AIAgent:
         return self.llm.generate(f"{context}Question : {user_msg}")
 
     def process(self, message, msisdn=None):
-        """
-        Traite le message de l'utilisateur
-        msisdn : numéro de téléphone de l'utilisateur connecté
-        """
+        
         intent = self.detect_intent(message)
         response = {'action': None, 'message': '', 'data': {}}
 
-        # ========================================
-        # CONSULTER LE SOLDE
-        # ========================================
+      
         if intent['type'] == 'get_balance':
             if not msisdn:
                 response['message'] = "Erreur : utilisateur non connecté"
@@ -64,7 +59,7 @@ class AIAgent:
             balance_info = self.telecom.get_balance(msisdn)
             
             if balance_info['success']:
-                msg = f"💰 **Votre solde :**\n"
+                msg = f" **Votre solde :**\n"
                 msg += f"• Crédit : {balance_info['solde']:.2f} DH\n"
                 msg += f"• Data restant : {balance_info['data_restant']:.2f} Go\n"
                 
@@ -74,19 +69,17 @@ class AIAgent:
                 # Afficher les offres actives
                 offres = json.loads(balance_info['offres_actives']) if balance_info['offres_actives'] else []
                 if offres:
-                    msg += f"\n📦 Offres actives : {len(offres)}"
+                    msg += f"\n Offres actives : {len(offres)}"
                     response['action'] = 'show_active_bundles'
                     response['data'] = {'offres_actives': offres}
                 else:
-                    msg += "\n📦 Aucune offre active"
+                    msg += "\n Aucune offre active"
                 
                 response['message'] = msg
             else:
-                response['message'] = f"❌ Erreur : {balance_info['error']}"
+                response['message'] = f" Erreur : {balance_info['error']}"
 
-        # ========================================
-        # RECHARGE
-        # ========================================
+    
         elif intent['type'] == 'recharge':
             if not intent['montant']:
                 response['message'] = "Quel montant souhaitez-vous recharger ? (ex: 50 DH)"
@@ -99,11 +92,11 @@ class AIAgent:
                 
                 if result['success']:
                     response['message'] = (
-                        f"✅ Recharge de {result['montant']} DH effectuée avec succès !\n"
-                        f"💰 Nouveau solde : {result['nouveau_solde']:.2f} DH"
+                        f" Recharge de {result['montant']} DH effectuée avec succès !\n"
+                        f" Nouveau solde : {result['nouveau_solde']:.2f} DH"
                     )
                 else:
-                    response['message'] = f"❌ Erreur : {result['error']}"
+                    response['message'] = f" Erreur : {result['error']}"
 
         # ========================================
         # ACTIVER UN PASS INTERNET
@@ -138,16 +131,11 @@ class AIAgent:
                 response['data'] = {'offres_actives': offres}
                 response['message'] = "Quelle offre souhaitez-vous annuler ?"
 
-        # ========================================
-        # SUSPENDRE LA LIGNE
-        # ========================================
+      
         elif intent['type'] == 'suspend_line':
             response['action'] = 'confirm_suspend'
-            response['message'] = "⚠️ Voulez-vous vraiment suspendre votre ligne ? Cette action empêchera tout appel et SMS."
+            response['message'] = " Voulez-vous vraiment suspendre votre ligne ? Cette action empêchera tout appel et SMS."
 
-        # ========================================
-        # QUESTION GÉNÉRALE
-        # ========================================
         else:
             rag = self.rag_search(message)
             response['message'] = self.llm_answer(message, rag)
