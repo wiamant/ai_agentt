@@ -11,10 +11,6 @@ class LocalLLM:
         )
 
     def generate(self, user_message: str, context: str = ""):
-        """
-        Génère une réponse avec le LLM local
-        """
-        # Construire le message avec le contexte si disponible
         full_message = f"{context}\n{user_message}" if context else user_message
         
         messages = [
@@ -35,5 +31,5 @@ class LocalLLM:
             return response["message"]["content"].strip()
         
         except Exception as e:
-            print(f"❌ Erreur LLM: {e}")
+            print(f" Erreur LLM: {e}")
             return "Désolé, je rencontre un problème technique. Pouvez-vous reformuler votre question ?"
