@@ -10,9 +10,7 @@ Ce projet consiste à concevoir et implémenter un agent intelligent basé sur l
 *  Authentification-Chat IA-Détection d’intentions-LLM local
 
 ## Architecture générale
-[ Navigateur Web ]
-|
-v
+
 [ Frontend HTML/CSS/JS ]
 |
 v
@@ -24,7 +22,7 @@ v
 | +--> RAG Search
 | +--> LLM Answer
 |
-+--> [ LocalLLM ] --> Ollama --> LLaMA 3
++--> [ LocalLLM ] 
 
 ##  Technologies utilisées
 
