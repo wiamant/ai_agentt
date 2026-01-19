@@ -8,17 +8,14 @@ class Database:
         self.init_db()
     
     def get_connection(self):
-        """Créer une connexion à la base de données"""
         conn = sqlite3.connect(self.db_file)
         conn.row_factory = sqlite3.Row
         return conn
     
     def init_db(self):
-        """Initialiser la base de données avec des tables et données de test"""
         conn = self.get_connection()
         cursor = conn.cursor()
         
-        # Table clients
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS clients (
                 msisdn TEXT PRIMARY KEY,
@@ -31,7 +28,6 @@ class Database:
             )
         ''')
         
-        # Table offres
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS offres (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -42,7 +38,6 @@ class Database:
             )
         ''')
         
-        # Table transactions
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS transactions (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -54,7 +49,6 @@ class Database:
             )
         ''')
         
-        # Vérifier si des données existent déjà
         cursor.execute('SELECT COUNT(*) as count FROM clients')
         if cursor.fetchone()['count'] == 0:
             # Insérer des clients de test
@@ -68,7 +62,6 @@ class Database:
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', clients_test)
         
-        # Vérifier si des offres existent
         cursor.execute('SELECT COUNT(*) as count FROM offres')
         if cursor.fetchone()['count'] == 0:
             # Insérer des offres
@@ -87,10 +80,9 @@ class Database:
         
         conn.commit()
         conn.close()
-        print("✅ Base de données initialisée")
+        print(" Base de données initialisée")
     
     def get_client(self, msisdn):
-        """Récupérer un client par son numéro"""
         conn = self.get_connection()
         cursor = conn.cursor()
         
@@ -102,7 +94,6 @@ class Database:
         return dict(client) if client else None
     
     def get_offres(self):
-        """Récupérer toutes les offres disponibles"""
         conn = self.get_connection()
         cursor = conn.cursor()
         
@@ -114,7 +105,6 @@ class Database:
         return [dict(offre) for offre in offres]
     
     def get_transactions(self, msisdn, limit=10):
-        """Récupérer l'historique des transactions d'un client"""
         conn = self.get_connection()
         cursor = conn.cursor()
         
