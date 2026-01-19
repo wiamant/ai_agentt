@@ -7,7 +7,6 @@ class TelecomAPI:
         self.db = db
     
     def recharge(self, msisdn, montant):
-        """Effectue une recharge"""
         conn = self.db.get_connection()
         cursor = conn.cursor()
         
@@ -21,7 +20,6 @@ class TelecomAPI:
             nouveau_solde = result['solde'] + montant
             cursor.execute('UPDATE clients SET solde = ? WHERE msisdn = ?', (nouveau_solde, msisdn))
             
-            # Enregistrer la transaction
             cursor.execute('''
                 INSERT INTO transactions (msisdn, type, montant, description)
                 VALUES (?, ?, ?, ?)
@@ -41,12 +39,10 @@ class TelecomAPI:
             conn.close()
     
     def activate_data_bundle(self, msisdn, bundle_id):
-        """Active un pass internet"""
         conn = self.db.get_connection()
         cursor = conn.cursor()
         
         try:
-            # Récupérer client et offre
             cursor.execute('SELECT * FROM clients WHERE msisdn = ?', (msisdn,))
             client = cursor.fetchone()
             
@@ -62,7 +58,6 @@ class TelecomAPI:
             if client['solde'] < offre['prix']:
                 return {'success': False, 'error': 'Solde insuffisant'}
             
-            # Mettre à jour le client
             nouveau_solde = client['solde'] - offre['prix']
             nouveau_data = client['data_restant'] + offre['data_go']
             expiration = (datetime.now() + timedelta(days=offre['duree_jours'])).isoformat()
@@ -80,7 +75,6 @@ class TelecomAPI:
                 WHERE msisdn = ?
             ''', (nouveau_solde, nouveau_data, expiration, json.dumps(offres_actives), msisdn))
             
-            # Transaction
             cursor.execute('''
                 INSERT INTO transactions (msisdn, type, montant, description)
                 VALUES (?, ?, ?, ?)
@@ -101,7 +95,6 @@ class TelecomAPI:
             conn.close()
     
     def get_balance(self, msisdn):
-        """Récupère le solde"""
         client = self.db.get_client(msisdn)
         
         if not client:
@@ -120,7 +113,6 @@ class TelecomAPI:
         }
     
     def suspend_line(self, msisdn):
-        """Suspend une ligne"""
         conn = self.db.get_connection()
         cursor = conn.cursor()
         
@@ -140,7 +132,6 @@ class TelecomAPI:
             conn.close()
     
     def cancel_bundle(self, msisdn, bundle_id):
-        """Annule une offre"""
         conn = self.db.get_connection()
         cursor = conn.cursor()
         
