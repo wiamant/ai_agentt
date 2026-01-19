@@ -6,9 +6,7 @@ from telecom_api import TelecomAPI
 app = Flask(__name__)
 app.secret_key = "dev-secret-key"
 
-# ======================
-# INIT - IMPORTANT : passer db et telecom à l'agent
-# ======================
+
 db = Database()
 telecom = TelecomAPI(db)
 agent = AIAgent(db=db, telecom=telecom)  # CHANGEMENT ICI
@@ -21,9 +19,6 @@ def index():
     return render_template('index.html')
 
 
-# ======================
-# AUTHENTIFICATION
-# ======================
 @app.route('/api/auth', methods=['POST'])
 def auth():
     data = request.json
@@ -48,18 +43,14 @@ def auth():
     })
 
 
-# ======================
-# LOGOUT
-# ======================
+
 @app.route('/api/logout', methods=['POST'])
 def logout():
     session.clear()
     return jsonify({"success": True})
 
 
-# ======================
-# CHATBOT - CHANGEMENT ICI
-# ======================
+
 @app.route('/api/chat', methods=['POST'])
 def chat():
     if 'msisdn' not in session:
@@ -73,9 +64,6 @@ def chat():
     return jsonify(response)
 
 
-# ======================
-# ACTIONS TÉLÉCOM
-# ======================
 @app.route('/api/action/activate-bundle', methods=['POST'])
 def activate_bundle():
     if 'msisdn' not in session:
